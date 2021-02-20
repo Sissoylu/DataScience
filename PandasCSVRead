@@ -1,0 +1,40 @@
+import numpy as np
+import pandas as pd
+from sklearn.impute import SimpleImputer
+df = pd.read_csv('D:/dataset/covid_19_data.csv')
+#head = df.head(10) head(sayı) içine yazılan sayı kadar veri gösterir
+
+df.drop(['SNo','Last Update'],axis=1,inplace=True) #SNo ve Last Update sütunlarını atmamızı sağlar
+#print(df.head())
+
+#Sütunların adını değiştirmek için kullanılan Syntax
+df.rename(columns={'ObservationDate':'Date', 'Province/State':'State','Country/Region':'Country'},inplace=True)
+#print(df.head())
+
+df['Date'] = pd.to_datetime(df['Date']) #1/22/2020 -> 2020-01-22 dönüşüm yaptı
+#print(df.head())
+
+#desc = df.describe() #count,mean,std... hesaplamaları
+#print(desc)
+
+"""
+df = df.fillna('NA')
+info = df.info()
+print(info)
+"""
+
+#Boş alanlar NA ile doldurulur
+#print(df.head(20))
+
+#tüm ülkeler için confirmed,deaths,recovered bilgilerini almak istiyoruz
+#country is groupping
+#country confirmed deaths and recovered are groupped
+
+df2 = df.groupby('Country')[['Country','Confirmed','Deaths','Recovered']].sum().reset_index()
+#print(df2)
+
+df3 = df.groupby(['Country','Date'])[['Country','Date','Confirmed','Deaths','Recovered']].sum().reset_index
+#print(df3)
+
+df4 = df2[df2['Confirmed']>100] #pick the confirmed cases which are greater than 100
+#print(df4)
